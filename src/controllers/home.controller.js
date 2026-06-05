@@ -18,10 +18,14 @@ const renderReservations = async () => {
   const filteredReservations =
     user.role === "admin"
       ? reservations
-      : reservations.filter((reservation) => Number(reservation.userId) === Number(user.id));
+      : reservations.filter(
+          (reservation) => Number(reservation.userId) === Number(user.id)
+        );
 
   container.innerHTML = filteredReservations.length
-    ? filteredReservations.map((reservation) => ReservationCard(reservation)).join("")
+    ? filteredReservations
+        .map((reservation) => ReservationCard(reservation))
+        .join("")
     : `
       <div class="w-full text-center py-8 col-span-2">
         <p class="text-slate-500">No hay reservas disponibles</p>
@@ -78,6 +82,54 @@ export const homeController = async () => {
 
     if (event.target.classList.contains("cancelBtn")) {
       await updateReservation(id, { status: "cancelled" });
+    }
+
+    if (event.target.classList.contains("editBtn")) {
+      const reservations = await getReservations();
+      const reservation = reservations.find(
+        (reservation) => Number(reservation.id) === Number(id)
+      );
+
+      if (!reservation) {
+        alert("Reserva no encontrada");
+        return;
+      }
+
+      const newWorkspace = prompt("Editar espacio:", reservation.workspace);
+      const newDate = prompt("Editar fecha:", reservation.date);
+      const newStartHour = prompt("Editar hora de inicio:", reservation.startHour);
+      const newEndHour = prompt("Editar hora final:", reservation.endHour);
+      const newReason = prompt("Editar motivo:", reservation.reason);
+      const newStatus = prompt(
+        "Editar estado: pending, approved, rejected, cancelled",
+        reservation.status
+      );
+
+      if (
+        !newWorkspace ||
+        !newDate ||
+        !newStartHour ||
+        !newEndHour ||
+        !newReason ||
+        !newStatus
+      ) {
+        alert("Todos los campos son obligatorios");
+        return;
+      }
+
+      if (newStartHour >= newEndHour) {
+        alert("La hora de inicio debe ser menor que la hora final");
+        return;
+      }
+
+      await updateReservation(id, {
+        workspace: newWorkspace,
+        date: newDate,
+        startHour: newStartHour,
+        endHour: newEndHour,
+        reason: newReason,
+        status: newStatus,
+      });
     }
 
     if (event.target.classList.contains("deleteBtn")) {

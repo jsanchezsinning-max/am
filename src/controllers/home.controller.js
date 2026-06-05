@@ -63,34 +63,40 @@ export const homeController = async () => {
     };
 
     await createReservation(newReservation);
+
     form.reset();
+
     await renderReservations();
   });
 
   container?.addEventListener("click", async (event) => {
-    const id = event.target.dataset.id;
+    const button = event.target.closest("button");
+
+    if (!button) return;
+
+    const id = button.dataset.id;
 
     if (!id) return;
 
-    if (event.target.classList.contains("approveBtn")) {
+    if (button.classList.contains("approveBtn")) {
       await updateReservation(id, {
         status: "approved",
       });
     }
 
-    if (event.target.classList.contains("rejectBtn")) {
+    if (button.classList.contains("rejectBtn")) {
       await updateReservation(id, {
         status: "rejected",
       });
     }
 
-    if (event.target.classList.contains("cancelBtn")) {
+    if (button.classList.contains("cancelBtn")) {
       await updateReservation(id, {
         status: "cancelled",
       });
     }
 
-    if (event.target.classList.contains("editBtn")) {
+    if (button.classList.contains("editBtn")) {
       const reservations = await getReservations();
 
       const reservation = reservations.find(
@@ -152,7 +158,7 @@ export const homeController = async () => {
       });
     }
 
-    if (event.target.classList.contains("deleteBtn")) {
+    if (button.classList.contains("deleteBtn")) {
       const confirmDelete = confirm(
         "¿Seguro que deseas eliminar esta reserva?"
       );

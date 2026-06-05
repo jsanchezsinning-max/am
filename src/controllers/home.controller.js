@@ -73,19 +73,26 @@ export const homeController = async () => {
     if (!id) return;
 
     if (event.target.classList.contains("approveBtn")) {
-      await updateReservation(id, { status: "approved" });
+      await updateReservation(id, {
+        status: "approved",
+      });
     }
 
     if (event.target.classList.contains("rejectBtn")) {
-      await updateReservation(id, { status: "rejected" });
+      await updateReservation(id, {
+        status: "rejected",
+      });
     }
 
     if (event.target.classList.contains("cancelBtn")) {
-      await updateReservation(id, { status: "cancelled" });
+      await updateReservation(id, {
+        status: "cancelled",
+      });
     }
 
     if (event.target.classList.contains("editBtn")) {
       const reservations = await getReservations();
+
       const reservation = reservations.find(
         (reservation) => Number(reservation.id) === Number(id)
       );
@@ -95,14 +102,29 @@ export const homeController = async () => {
         return;
       }
 
-      const newWorkspace = prompt("Editar espacio:", reservation.workspace);
-      const newDate = prompt("Editar fecha:", reservation.date);
-      const newStartHour = prompt("Editar hora de inicio:", reservation.startHour);
-      const newEndHour = prompt("Editar hora final:", reservation.endHour);
-      const newReason = prompt("Editar motivo:", reservation.reason);
-      const newStatus = prompt(
-        "Editar estado: pending, approved, rejected, cancelled",
-        reservation.status
+      const newWorkspace = prompt(
+        "Editar espacio:",
+        reservation.workspace
+      );
+
+      const newDate = prompt(
+        "Editar fecha:",
+        reservation.date
+      );
+
+      const newStartHour = prompt(
+        "Editar hora de inicio:",
+        reservation.startHour
+      );
+
+      const newEndHour = prompt(
+        "Editar hora final:",
+        reservation.endHour
+      );
+
+      const newReason = prompt(
+        "Editar motivo:",
+        reservation.reason
       );
 
       if (
@@ -110,8 +132,7 @@ export const homeController = async () => {
         !newDate ||
         !newStartHour ||
         !newEndHour ||
-        !newReason ||
-        !newStatus
+        !newReason
       ) {
         alert("Todos los campos son obligatorios");
         return;
@@ -128,13 +149,16 @@ export const homeController = async () => {
         startHour: newStartHour,
         endHour: newEndHour,
         reason: newReason,
-        status: newStatus,
       });
     }
 
     if (event.target.classList.contains("deleteBtn")) {
-      const confirmDelete = confirm("¿Seguro que deseas eliminar esta reserva?");
+      const confirmDelete = confirm(
+        "¿Seguro que deseas eliminar esta reserva?"
+      );
+
       if (!confirmDelete) return;
+
       await deleteReservation(id);
     }
 
